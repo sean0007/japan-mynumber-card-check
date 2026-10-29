@@ -1,0 +1,60 @@
+# Japan My Number Card Expiry Check
+
+> Free, unofficial checker for when a Japan My Number Card (マイナンバーカード, Individual Number Card) expires and what the holder must do before then. Foreign residents with a period of stay: the card ends on the period-of-stay expiry and is NOT extended automatically by a visa renewal (ordinance art. 27); extend at city hall before that date, up to the 10th birthday after the card was made; one-time extension to expiry + 2 months while a renewal is pending. Japanese, permanent residents, HSP (ii), special permanent residents: 10th / 5th birthday (art. 26), renewal from the day fewer than 3 months remain, new card to the 11th / 6th birthday (art. 29). Also e-certificates, the マイナ保険証 grace and the 特定在留カード (2026-06-14). Rules as of 2026-10-29. Educational, not legal advice; not affiliated with the Digital Agency, J-LIS, ISA or any city office.
+
+Site: https://japan-mynumber-card-check.vercel.app
+
+## Key facts (official sources below)
+- Card validity (18+ at issue): to the 10th birthday after the card was made; under 18: 5th birthday. Cards made by 2022-03-31 used age 20 as the line. Feb 29 birthdays → Feb 28 in non-leap years.
+- Renewal: from the first day fewer than 3 months remain (expiry 2026-10-01 → from 2026-07-02), free, also after expiry (Digital Agency FAQ Q12). A card made in that window runs to the 11th (6th) birthday.
+- Foreign residents with a period of stay: card expires on the period-of-stay expiry (under 18: earlier of that and the 5th birthday). No auto-extension and no reminder. After a renewal / change is granted, extend at city hall BEFORE the card expires (free); otherwise the card lapses and a new card is needed (some cities charge, e.g. Matsudo ¥1,000).
+- Renewal pending at expiry: with proof (更新申請中 stamp, online completion email, receipt), the city extends the card once, to expiry + 2 months (end of the special period). Then extend again when the new residence card arrives.
+- Becoming PR / HSP (ii) / SPR: the card can be extended to the 10th-birthday date (art. 27(2)(i)).
+- 特定在留カード (combined residence card + My Number Card, since 2026-06-14): optional, counter-only. New card from ISA = no city-hall visit. While pending, the My Number function still ends on the original date: extend at city hall before then (ISA Q5-3).
+- E-certificates: 5th birthday after issue, never past the card. マイナ保険証 grace after the user certificate expires: to the end of the 3rd month after the expiry month (2026-11-10 → 2027-02-28), eligibility info only.
+- PR / HSP (ii) residence card: issued by 2026-06-13 = 7 years; from 2026-06-14 = 10th birthday after issue. Renew at ISA from 3 months before; free.
+
+## API (free, no key, CORS open)
+
+### GET
+GET https://japan-mynumber-card-check.vercel.app/api/check?holder=mid_long&birthDate=1992-04-10&cardIssueDate=2024-03-01&residenceExpiry=2026-12-15&renewal=pending&today=2026-10-29
+→ verdict "extend_before_expiry", card {expiry "2026-12-15", maxExtendableTo "2033-04-10"}, specialExtension {extendTo "2027-02-15", mustApplyBy "2026-12-15"}, ecert {expiry, renewFrom, status, insuranceGraceEnds "2027-03-31"}, actions[{what, from, by, where, fee}], warnings[], sources, disclaimer
+
+### POST
+POST https://japan-mynumber-card-check.vercel.app/api/check
+{"holder":"japanese","birthDate":"1985-01-20","cardIssueDate":"2017-02-01","today":"2026-10-29"}
+→ verdict "renew_window_open", card.expiry "2027-01-20", card.renewFrom "2026-10-21"
+
+Parameters: holder (mid_long | permanent | hsp2 | spr | japanese; aliases pr, student, work, citizen…), birthDate, cardIssueDate, residenceExpiry (mid_long), renewal (none | pending | granted), newResidenceExpiry (granted), specificCard (true/false), cardExpiry (optional override), ecertExpiry (optional), issuedAsRenewal (optional), residenceCardExpiry (PR / HSP2, optional), today (optional). Never send a My Number itself.
+
+### Other endpoints
+- GET https://japan-mynumber-card-check.vercel.app/api/rules
+- https://japan-mynumber-card-check.vercel.app/openapi.json
+- https://japan-mynumber-card-check.vercel.app/.well-known/ai-plugin.json
+- MCP: tool japan_my_number_card_expiry_check on https://free-agent-tools.vercel.app/mcp
+
+## Sources (official)
+- https://laws.e-gov.go.jp/law/426M60000008085 (個人番号カード等に関する命令 art. 26, 27, 29; e-Gov)
+- https://www.digital.go.jp/en/policies/mynumber/expiration-date (Digital Agency: expiry and renewal FAQ, EN)
+- https://www.digital.go.jp/policies/mynumber/expiration-date (Digital Agency, JA)
+- https://www.moj.go.jp/isa/tokutei.html (ISA: 特定在留カード and Q&A)
+- https://www.moj.go.jp/isa/applications/procedures/nyuukokukanri10_00011.html (ISA: PR / HSP2 residence-card renewal)
+- https://www.moj.go.jp/isa/10_00270.html (ISA: apply 3 months to 45 days before; banks may restrict accounts)
+- https://faq.myna.go.jp/faq/show/10178?site_domain=default (Mynaportal: マイナ保険証 after e-certificate expiry)
+- https://www.city.matsudo.chiba.jp/InternationalPortal/en/forforeignresidents/mynumbercard.html (Matsudo City: foreign residents' extension and 2-month special extension)
+- https://www.mhlw.go.jp/stf/newpage_50657.html (MHLW: e-certificate expiry and マイナ保険証)
+
+## Disclaimer
+Educational date calculator, not legal advice, not affiliated with the Digital Agency, J-LIS, ISA or any city office. The date printed on your card and your city office are what count.
+
+## Other free tools by the same maker
+- Japan Re-entry Deadline Check (when a foreign resident must be back in Japan on a deemed re-entry permit, incl. a pending renewal): https://japan-reentry-check.vercel.app
+- Japan Visa Fee Calculator: https://japan-visa-fee.vercel.app
+- Japan PR Guideline Check: https://japan-pr-check.vercel.app
+- Japan Overseas Dependents Check: https://japan-overseas-dependents.vercel.app
+- Japan Part-time Work Check: https://japan-parttime-check.vercel.app
+- Japan Driving Check: https://japan-driving-check.vercel.app
+- House Rules Check: https://house-rules-check.vercel.app
+- Japan Tax-Free Refund Checker: https://japan-tax-free-refund.vercel.app
+- Japan Alert Decoder: https://japan-alert-decoder.vercel.app
+- Free Agent Tools MCP: https://free-agent-tools.vercel.app
