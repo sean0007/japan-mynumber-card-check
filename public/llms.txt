@@ -57,4 +57,5 @@ Educational date calculator, not legal advice, not affiliated with the Digital A
 - House Rules Check: https://house-rules-check.vercel.app
 - Japan Tax-Free Refund Checker: https://japan-tax-free-refund.vercel.app
 - Japan Alert Decoder: https://japan-alert-decoder.vercel.app
+- Japan Trip Brain (Japan trip planner): https://japan-trip-brain.vercel.app
 - Free Agent Tools MCP: https://free-agent-tools.vercel.app
