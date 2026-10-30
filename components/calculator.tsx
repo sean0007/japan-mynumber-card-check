@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { CardDisclaimer } from "@/components/card-disclaimer";
 import { ShareBar } from "@/components/share-bar";
 import { HOLDERS, HOLDER_LABEL, type Holder, type Renewal } from "@/lib/card";
@@ -29,6 +29,8 @@ const ECERT_LABEL: Record<string, string> = {
   expired: "expired",
 };
 
+const noopSubscribe = () => () => {};
+
 export function Calculator({ initial }: { initial?: Shared }) {
   const start = initial ?? EXAMPLE_SHARED;
   const [holder, setHolder] = useState<Holder>(start.holder);
@@ -38,7 +40,12 @@ export function Calculator({ initial }: { initial?: Shared }) {
   const [renewal, setRenewal] = useState<Renewal>(start.renewal);
   const [newResidenceExpiry, setNewExp] = useState(start.newResidenceExpiry ?? "");
   const [specificCard, setSpecific] = useState(start.specificCard);
-  const [today, setToday] = useState(start.today ?? "");
+  // The home example is pinned to a fixed date for the prerender and stable share links; once the
+  // page is hydrated, a visitor's own check runs as of their real today (unless a shared link or
+  // the visitor sets a date).
+  const hydrated = useSyncExternalStore(noopSubscribe, () => true, () => false);
+  const [todayEdit, setToday] = useState<string | null>(null);
+  const today = todayEdit ?? (initial || !hydrated ? (start.today ?? "") : "");
 
   const mid = holder === "mid_long";
   const shared: Shared = {
