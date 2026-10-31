@@ -87,3 +87,12 @@ test("input errors", () => {
   assert.throws(() => checkCard({ holder: "japanese", birthDate: "1990-01-01", cardIssueDate: "2023-02-30" }), RuleInputError);
   assert.throws(() => checkCard({ holder: "mid_long", birthDate: "1990-01-01", cardIssueDate: "2023-01-10", residenceExpiry: "2026-12-01", renewal: "granted", today: "2026-10-29" }), RuleInputError);
 });
+
+test("future cardIssueDate is rejected (issue date is in the future)", () => {
+  assert.throws(() => checkCard({ holder: "japanese", birthDate: "1990-01-01", cardIssueDate: "2030-01-01", today: "2026-10-31" }), (e: unknown) => e instanceof RuleInputError && /issue date is in the future/.test((e as Error).message));
+  assert.throws(() => checkCard({ holder: "mid_long", birthDate: "1992-04-10", cardIssueDate: "2026-11-01", residenceExpiry: "2026-12-15", today: "2026-10-31" }), RuleInputError);
+  // default today (real today in Japan) also applies
+  assert.throws(() => checkCard({ holder: "japanese", birthDate: "1990-01-01", cardIssueDate: "2999-01-01" }), RuleInputError);
+  // issued on the check date is fine
+  assert.equal(checkCard({ holder: "japanese", birthDate: "1990-01-01", cardIssueDate: "2026-10-31", today: "2026-10-31" }).card.expiry, "2036-01-01");
+});

@@ -27,6 +27,8 @@ POST https://japan-mynumber-card-check.vercel.app/api/check
 
 Parameters: holder (mid_long | permanent | hsp2 | spr | japanese; aliases pr, student, work, citizen…), birthDate, cardIssueDate, residenceExpiry (mid_long), renewal (none | pending | granted), newResidenceExpiry (granted), specificCard (true/false), cardExpiry (optional override), ecertExpiry (optional), issuedAsRenewal (optional), residenceCardExpiry (PR / HSP2, optional), today (optional). Never send a My Number itself.
 
+Bad input → 400 {error, docs, example, disclaimer}: missing / invalid holder or dates, cardIssueDate before birthDate or before 2016, and a cardIssueDate after today (or after the "today" you give): "issue date is in the future".
+
 ### Other endpoints
 - GET https://japan-mynumber-card-check.vercel.app/api/rules
 - https://japan-mynumber-card-check.vercel.app/openapi.json

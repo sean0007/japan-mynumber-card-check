@@ -3,7 +3,7 @@
 import { useState, useSyncExternalStore } from "react";
 import { CardDisclaimer } from "@/components/card-disclaimer";
 import { ShareBar } from "@/components/share-bar";
-import { HOLDERS, HOLDER_LABEL, type Holder, type Renewal } from "@/lib/card";
+import { HOLDERS, HOLDER_LABEL, todayJst, type Holder, type Renewal } from "@/lib/card";
 import { EXAMPLE_SHARED, PUBLIC_URL, resultPath, safeCheck, type Shared } from "@/lib/share";
 
 const field = "mt-2 w-full rounded-xl border border-line bg-black/40 px-3 py-2 text-sm text-foreground focus:border-amber";
@@ -59,6 +59,8 @@ export function Calculator({ initial }: { initial?: Shared }) {
     today: today || null,
   };
   const r = birthDate && cardIssueDate ? safeCheck(shared) : null;
+  // An issue date after the check date is rejected by the API ("issue date is in the future"); say so instead of the generic prompt.
+  const issueInFuture = !r && !!cardIssueDate && cardIssueDate > (today || todayJst());
   const shareUrl = `${PUBLIC_URL}${resultPath(shared)}`;
 
   return (
@@ -166,6 +168,10 @@ export function Calculator({ initial }: { initial?: Shared }) {
                 <ShareBar url={shareUrl} text={`My Number Card: ${VERDICT_LABEL[r.verdict].toLowerCase()} (expires ${r.card.expiry})`} />
               </div>
             </>
+          ) : issueInFuture ? (
+            <p className="text-sm text-amber-200" data-testid="issue-future">
+              That card issue date ({cardIssueDate}) is in the future. Use the issue date (発行日) printed on your card.
+            </p>
           ) : (
             <p className="text-sm text-muted">Enter your date of birth, the card&apos;s issue date{mid ? " and your period-of-stay expiry" : ""}{mid && renewal === "granted" ? " and the new expiry" : ""} to see your dates.</p>
           )}

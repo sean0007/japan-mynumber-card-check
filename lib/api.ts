@@ -72,7 +72,7 @@ export const ENDPOINTS: Record<"check", Endpoint> = {
     params: [
       { name: "holder", type: "string", required: true, enum: HOLDERS, description: "mid_long (foreign resident with a period of stay: work, student, spouse…), permanent, hsp2, spr (special permanent resident), japanese. Aliases: pr, student, work, citizen…" },
       { name: "birthDate", type: "string", required: true, description: "YYYY-MM-DD date of birth." },
-      { name: "cardIssueDate", type: "string", required: true, description: "YYYY-MM-DD the card was made / issued (発行日 on the card)." },
+      { name: "cardIssueDate", type: "string", required: true, description: "YYYY-MM-DD the card was made / issued (発行日 on the card). Not in the future (after today): that returns 400 \"issue date is in the future\"." },
       { name: "residenceExpiry", type: "string", description: "mid_long: YYYY-MM-DD period-of-stay expiry (在留期限) that applied when the card was made or last extended. Required for mid_long unless cardExpiry is given." },
       { name: "renewal", type: "string", enum: RENEWALS, default: "none", description: "mid_long: visa renewal / change status: none | pending (applied, no decision) | granted (new residence card received)." },
       { name: "newResidenceExpiry", type: "string", description: "YYYY-MM-DD new period-of-stay expiry when renewal=granted." },

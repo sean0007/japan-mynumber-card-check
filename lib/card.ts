@@ -180,6 +180,7 @@ export function checkCard(input: CheckInput): CheckResult {
   const ecertExpiryIn = opt(input.ecertExpiry, "ecertExpiry");
   const residenceCardExpiry = opt(input.residenceCardExpiry, "residenceCardExpiry");
   const today = opt(input.today, "today") ?? todayJst();
+  if (cardIssueDate > today) throw new RuleInputError(`cardIssueDate ${cardIssueDate}: issue date is in the future (after ${today}, today in Japan or the "today" you gave). Use the issue date (発行日) printed on your card.`);
   const specificCard = !!input.specificCard;
   const issuedAsRenewal = !!input.issuedAsRenewal;
 

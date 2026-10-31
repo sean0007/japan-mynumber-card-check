@@ -63,3 +63,18 @@ test("OpenAPI lists /api/check GET and POST", () => {
   assert.ok(spec.paths["/api/check"]?.post);
   assert.ok(spec.paths["/api/check"].get.parameters.find((p) => p.name === "cardIssueDate"));
 });
+
+test("future cardIssueDate → 400 'issue date is in the future' with example + disclaimer", async () => {
+  for (const q of ["holder=japanese&birthDate=1990-01-01&cardIssueDate=2030-01-01", "holder=mid_long&birthDate=1992-04-10&cardIssueDate=2026-11-01&residenceExpiry=2026-12-15&today=2026-10-31", "holder=permanent&birthDate=1990-07-07&cardIssueDate=2024-01-01&today=2023-12-31"]) {
+    const res = await handler(new Request(`${PUBLIC_URL}${e.path}?${q}`));
+    assert.equal(res.status, 400, q);
+    const body = await res.json();
+    assert.match(body.error, /issue date is in the future/);
+    assert.equal(body.disclaimer, API_DISCLAIMER);
+    assert.ok(body.example);
+    assert.equal(body.verdict, undefined);
+  }
+  // issued today is fine
+  const ok = await handler(new Request(`${PUBLIC_URL}${e.path}?holder=japanese&birthDate=1990-01-01&cardIssueDate=2026-10-31&today=2026-10-31`));
+  assert.equal(ok.status, 200);
+});
