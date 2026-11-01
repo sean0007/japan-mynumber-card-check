@@ -54,6 +54,7 @@ Educational date calculator, not legal advice, not affiliated with the Digital A
 - Japan Visa Fee Calculator: https://japan-visa-fee.vercel.app
 - Japan PR Guideline Check: https://japan-pr-check.vercel.app
 - Japan HSP Points Calculator: https://japan-hsp-points.vercel.app
+- Japan Pet Quarantine Check: https://japan-pet-quarantine.vercel.app
 - Japan Overseas Dependents Check: https://japan-overseas-dependents.vercel.app
 - Japan Part-time Work Check: https://japan-parttime-check.vercel.app
 - Japan Driving Check: https://japan-driving-check.vercel.app
